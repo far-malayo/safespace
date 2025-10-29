@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    background-color: white;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition;
+  }
+}
+
+@layer utilities {
+  /* you can add custom utility classes here later */
+}
