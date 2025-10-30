@@ -2,30 +2,6 @@
 
 import { useState } from "react";
 
-function LogoSVG({
-  className = "h-10 w-auto mx-auto",
-}: {
-  className?: string;
-}) {
-  return (
-    <svg
-      viewBox="0 0 120 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-hidden
-    >
-      <rect width="120" height="32" rx="6" fill="transparent" />
-      <text x="0" y="20" fill="#5b21b6" fontWeight={700} fontSize={14}>
-        Safe
-      </text>
-      <text x="40" y="20" fill="#ec4899" fontWeight={700} fontSize={14}>
-        Space
-      </text>
-    </svg>
-  );
-}
-
 export default function SignupPage() {
   const [form, setForm] = useState({
     name: "",
@@ -43,7 +19,7 @@ export default function SignupPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -51,12 +27,31 @@ export default function SignupPage() {
       return;
     }
 
-    console.log("Form submitted:", form);
-    // TODO: Wire up API call to register user
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to sign up");
+        return;
+      }
+
+      alert("Signup successful!");
+      console.log("User registered:", data);
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong!");
+    }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6">
-      <div className="max-w-6xl w-full bg-white rounded-3xl overflow-hidden shadow-xl grid grid-cols-1 md:grid-cols-2">
+      <div className="max-w-6xl w-full h-screen bg-white rounded-3xl overflow-hidden shadow-xl grid grid-cols-1 md:grid-cols-2">
         {/* Left panel with gradient and branding */}
         <div
           className="hidden md:flex items-center justify-center relative bg-linear-to-br from-purple-900 via-indigo-900 to-pink-700 p-12 bg-center bg-cover"
@@ -142,13 +137,13 @@ export default function SignupPage() {
                 placeholder="Full Name"
                 value={form.name}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-600"
+                className="w-full border border-gray-200 rounded-md p-2 text-sm placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
                 required
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-600">
+              <label className="block text-xs font-small text-gray-600">
                 Webmail<span className="ml-0.5 text-red-500">*</span>
               </label>
               <input
@@ -157,37 +152,37 @@ export default function SignupPage() {
                 placeholder="email@iskolarngbayan.pup.edu.ph"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full border border-pink-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="w-full border border-gray-200 rounded-md p-2 text-sm placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
                 required
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600">
+                <label className="block text-xs font-small text-gray-600">
                   Student Number<span className="ml-0.5 text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="studentNumber"
-                  placeholder="2XXX-XXXXX-XX-X"
+                  placeholder="2xxx-xxxxx-SR-0"
                   value={form.studentNumber}
                   onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                  className="w-full border border-gray-200 rounded-md p-2 text-sm placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600">
-                  Academic Organization
+                <label className="block text-xs font-small text-gray-600">
+                  Organization
                   <span className="ml-0.5 text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="organization"
-                  placeholder="Academic Organization"
+                  placeholder="Organization"
                   value={form.organization}
                   onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                  className="w-full border border-gray-200 rounded-md p-2 text-sm placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
                 />
               </div>
             </div>
@@ -195,7 +190,7 @@ export default function SignupPage() {
             <div>
               {/* Password */}
               <div>
-                <label className="block text-xs font-medium text-gray-600">
+                <label className="block text-xs font-small text-gray-600">
                   Password<span className="ml-0.5 text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -205,7 +200,7 @@ export default function SignupPage() {
                     placeholder="Password"
                     value={form.password}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-lg p-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    className="w-full border border-gray-200 rounded-md p-2 text-sm placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
                     required
                   />
                   <button
@@ -220,7 +215,7 @@ export default function SignupPage() {
 
               {/* Confirm Password */}
               <div className="mt-4">
-                <label className="block text-xs font-medium text-gray-600">
+                <label className="block text-xs font-small text-gray-600">
                   Confirm Password<span className="ml-0.5 text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -230,7 +225,7 @@ export default function SignupPage() {
                     placeholder="Confirm Password"
                     value={form.confirmPassword ?? ""}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-lg p-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    className="w-full border border-gray-200 rounded-md p-2 text-sm placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-pink-600"
                     required
                   />
                   <button
@@ -253,14 +248,14 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-pink-600 to-indigo-700 shadow-sm hover:opacity-95 transition"
+              className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-t from-[#a52163] to-[#1c167b] shadow-sm hover:opacity-95 transition"
             >
               Sign up
             </button>
 
             <p className="text-center text-sm text-gray-500">
               Already have an account?{" "}
-              <a href="/login" className="text-pink-600 hover:underline">
+              <a href="/studentLogin" className="text-pink-600 hover:underline">
                 Sign in
               </a>
             </p>
